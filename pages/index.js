@@ -7,8 +7,10 @@ export default function Home() {
     try {
       // Will get spaceId and storyId from webhook later. Will not use storyId at the moment.
       const body = {
-        spaceId: "196581",
-        storyId: "259892959",
+        text: "The user angelica.moberg@hotmail.com published the Story Home (home)\nhttps://app.storyblok.com/#/me/spaces/196581/stories/0/0/258853578",
+        action: "published",
+        space_id: 196581,
+        story_id: 258853578,
       };
       const request = {
         method: "POST",
