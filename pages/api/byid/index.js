@@ -24,27 +24,20 @@ export default async function handler(req, res) {
   switch (method) {
     case "POST":
       try {
-        const storyblokApi = getStoryblokApi();
+        if (!req.body) {
+          return res.status(400).json({ success: false, data: "Check body" });
+        }
+
         const defaultLang = "en"; // Default language
-
-        /* 
-      #1 Loops through all Ids, 
-      #2 GETs all translateable objects from Storyblok, 
-      #3 POSTs object to laravel/TobbeTranslate, 
-      #4 Receives a response from Laravel (Translated object), 
-      #5 POSTs translated object to Storyblok 
-     */
-        // #1
-
-        // #2
+        // Data to tobbe translate by storyId
         let { data } = await Storyblok.get(
           `spaces/${req.body.space_id}/stories/${req.body.story_id}/export.json?lang_code=${defaultLang}&export_lang=true`
         );
-        console.log(data);
+
         /////////////////////////////////////////////////////
         // #3
         // POST object to Tobbe translate/Laravel
-        //console.log({ data, id, spaceId, toLang: filteredLang });
+        //console.log({ data, id: req.body.story_id, spaceId:req.body.space_id , toLang: filteredLang });
 
         // #4
         // Receive Translated objects and POST to Storyblok for each country. Testing on one story.
@@ -59,7 +52,7 @@ export default async function handler(req, res) {
         // Mockup data. Represents "data" we get back from laravel
         const json = {
           "83266319-7946-4ecd-b2ed-a51b8c17c08b:all-articles:title":
-            "Du har uppdaterat en story -" + random, // Test data
+            req.body.text + random, // Test data
           language: "es",
           page: "258991850",
           text_nodes: 0,
@@ -79,7 +72,7 @@ export default async function handler(req, res) {
           data: { data: JSON.stringify(json) },
         });
 
-        res.status(200).json({ success: true, data: "Något blev published!" });
+        res.status(200).json({ success: true, data: req.body });
       } catch (error) {
         res.status(400).json({ success: false, message: error });
       }
