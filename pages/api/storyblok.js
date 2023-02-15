@@ -83,7 +83,8 @@ export default async function handler(req, res) {
 
             // Mockup data. Represents "data" we get back from laravel
             const json = {
-              "83266319-7946-4ecd-b2ed-a51b8c17c08b:all-articles:title": random, // Test data
+              "83266319-7946-4ecd-b2ed-a51b8c17c08b:all-articles:title":
+                "Du har uppdaterat alla stories-" + random, // Test data
               language: "es",
               page: "258991850",
               text_nodes: 0,

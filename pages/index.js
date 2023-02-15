@@ -10,7 +10,7 @@ export default function Home() {
         text: "The user angelica.moberg@hotmail.com published the Story Home (home)\nhttps://app.storyblok.com/#/me/spaces/196581/stories/0/0/258853578",
         action: "published",
         space_id: 196581,
-        story_id: 258853578,
+        story_id: 258991850,
       };
       const request = {
         method: "POST",
