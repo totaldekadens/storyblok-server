@@ -7,9 +7,9 @@ import randomstring from "randomstring";
 export default async function handler(req, res) {
   const { method } = req;
 
-  if (!req.body) {
+  /*   if (!req.body) {
     return res.status(400).json({ success: false, data: "Check body" });
-  }
+  } */
 
   // Connection Storyblok Content API
   storyblokInit({
@@ -25,11 +25,11 @@ export default async function handler(req, res) {
     case "POST":
       try {
         // Note: StoryId will not be used at the moment
-        if (!req.body.space_id || !req.body.story_id) {
+        /*     if (!req.body.space_id || !req.body.story_id) {
           return res
             .status(400)
             .json({ success: false, data: "Check content in body" });
-        }
+        } */
 
         const storyblokApi = getStoryblokApi();
         const defaultLang = "en"; // Default language
