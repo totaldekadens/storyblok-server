@@ -6,18 +6,14 @@ const nextConfig = {
     storyblokApiToken: process.env.STORYBLOK_API_TOKEN,
     storyblockOathToken: process.env.STORYBLOK_OATH_TOKEN,
   },
-  async rewrites() {
+  /* async rewrites() {
     return [
       {
         source: "/api/:path*",
         destination: "https://resonant-mooncake-8b4eef.netlify.app/:path*",
-      },
-      {
-        source: "/api/:path*",
-        destination: "http://localhost:3001/:path*",
-      },
+      }
     ];
-  },
+  }, */
 };
 
 module.exports = nextConfig;
