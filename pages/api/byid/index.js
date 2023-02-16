@@ -3,6 +3,11 @@ import axios from "axios";
 import StoryblokClient from "storyblok-js-client";
 import randomstring from "randomstring";
 import Cors from "cors";
+/* 
+
+Updates one story (Triggered by Storyblok when story gets published)
+
+*/
 
 // Initializing the cors middleware
 // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
@@ -24,11 +29,10 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-// Updates one story
 export default async function handler(req, res) {
   const { method } = req;
 
-  // Run the middleware
+  // Cors
   await runMiddleware(req, res, cors);
 
   // Connection Storyblok Content API
@@ -42,13 +46,6 @@ export default async function handler(req, res) {
   });
 
   switch (method) {
-    case "GET":
-      try {
-        res.json({ success: true, data: "Du kom in i GET!" });
-      } catch (error) {
-        res.json({ success: false, data: "Couldnt get anything" });
-      }
-      break;
     case "POST":
       try {
         if (!req.body) {
@@ -58,8 +55,8 @@ export default async function handler(req, res) {
         const defaultLang = "en"; // Default language
         // Data to tobbe translate by storyId
         let { data } = await Storyblok.get(
-          //`spaces/${req.body.space_id}/stories/${req.body.story_id}/export.json?lang_code=${defaultLang}&export_lang=true`
-          `spaces/196581/stories/258991850/export.json?lang_code=en&export_lang=true`
+          `spaces/${req.body.space_id}/stories/${req.body.story_id}/export.json?lang_code=${defaultLang}&export_lang=true`
+          //`spaces/196581/stories/258991850/export.json?lang_code=en&export_lang=true`
         );
 
         /////////////////////////////////////////////////////
@@ -92,8 +89,8 @@ export default async function handler(req, res) {
 
         // Updates story with specific language
         let response = axios({
-          url: `https://mapi.storyblok.com/v1/spaces/196581/stories/258991850/import.json?lang_code=es`,
-          // url: `https://mapi.storyblok.com/v1/spaces/${req.body.space_id}/stories/${req.body.story_id}/import.json?lang_code=${json.language}`,
+          //url: `https://mapi.storyblok.com/v1/spaces/196581/stories/258991850/import.json?lang_code=es`,
+          url: `https://mapi.storyblok.com/v1/spaces/${req.body.space_id}/stories/${req.body.story_id}/import.json?lang_code=${json.language}`,
           method: "put",
           headers: {
             Authorization: process.env.storyblockOathToken,
