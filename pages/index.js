@@ -41,10 +41,7 @@ export default function Home() {
         },
         body: JSON.stringify(body),
       };
-      let response = await fetch(
-        /* "/api/byid" */ "https://resonant-mooncake-8b4eef.netlify.app/api/byid",
-        request
-      );
+      let response = await fetch("/api/byid", request);
       let result = await response.json();
       console.log(result);
     } catch (err) {
