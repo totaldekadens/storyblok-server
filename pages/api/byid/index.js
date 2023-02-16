@@ -18,6 +18,13 @@ export default async function handler(req, res) {
   });
 
   switch (method) {
+    case "GET":
+      try {
+        res.json({ success: true, data: "Du kom in i GET!" });
+      } catch (error) {
+        res.json({ success: false, data: "Couldnt get anything" });
+      }
+      break;
     case "POST":
       try {
         if (!req.body) {
