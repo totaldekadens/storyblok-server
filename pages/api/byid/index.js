@@ -10,7 +10,7 @@ Updates one story (Triggered by Storyblok when story gets published)
 */
 
 // Initializing the cors middleware
-const cors = Cors({
+/* const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
 });
 
@@ -26,13 +26,13 @@ function runMiddleware(req, res, fn) {
       return resolve(result);
     });
   });
-}
+} */
 
 export default async function handler(req, res) {
   const { method } = req;
 
   // Cors
-  await runMiddleware(req, res, cors);
+  //await runMiddleware(req, res, cors);
 
   // Connection Storyblok Content API
   storyblokInit({
@@ -98,10 +98,8 @@ export default async function handler(req, res) {
           console.log(result); 
            */
 
-        // Receive Translated objects and POST to Storyblok for each country.
-        //console.log({ data, id, spaceId, toLang: filteredLang });
-
-        // generates random string to show the trigger works
+        // Todo:  Receive Translated objects and POST to Storyblok for each country.
+        // generates random string to show the trigger works. Will be removed later
         const random = randomstring.generate(7);
 
         // Mockup data. Represents "data" we get back from laravel.
