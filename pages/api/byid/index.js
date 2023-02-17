@@ -1,38 +1,15 @@
-import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
+import { storyblokInit, apiPlugin } from "@storyblok/react";
 import axios from "axios";
 import StoryblokClient from "storyblok-js-client";
 import randomstring from "randomstring";
-import Cors from "cors";
 /* 
 
 Updates one story (Triggered by Storyblok when story gets published)
 
 */
 
-// Initializing the cors middleware
-/* const cors = Cors({
-  methods: ["POST", "GET", "HEAD"],
-});
-
-// Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-
-      return resolve(result);
-    });
-  });
-} */
-
 export default async function handler(req, res) {
   const { method } = req;
-
-  // Cors
-  //await runMiddleware(req, res, cors);
 
   // Connection Storyblok Content API
   storyblokInit({
@@ -116,19 +93,31 @@ export default async function handler(req, res) {
         //console.log({ json, id, spaceId });
 
         // Updates story with specific language
-        let response = axios({
+        await axios({
           url: `https://mapi.storyblok.com/v1/spaces/${req.body.space_id}/stories/${req.body.story_id}/import.json?lang_code=${json.language}`,
           method: "put",
           headers: {
             Authorization: process.env.storyblockOathToken,
           },
           data: { data: JSON.stringify(json) },
-        });
-
-        res.status(200).json({ success: true, data: response });
+        })
+          .then(function (response) {
+            if (response.status == 200) {
+              return res
+                .status(200)
+                .json({ success: true, data: "Story updated" });
+            }
+            return res
+              .status(response.status)
+              .json({ success: false, message: response.statusText });
+          })
+          .catch(function (error) {
+            throw error;
+          });
       } catch (error) {
         res.status(400).json({ success: false, message: error });
       }
+
       break;
     default:
       res.status(400).json({ success: false, data: "Break error" });
