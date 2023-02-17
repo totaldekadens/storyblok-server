@@ -8,18 +8,18 @@ Updates one story (Triggered by Storyblok when story gets published)
 
 */
 
+// Connection Storyblok Content API
+storyblokInit({
+  accessToken: process.env.storyblokApiToken,
+  use: [apiPlugin],
+});
+// Connection Storyblok Management API
+const Storyblok = new StoryblokClient({
+  oauthToken: process.env.storyblockOathToken,
+});
+
 export default async function handler(req, res) {
   const { method } = req;
-
-  // Connection Storyblok Content API
-  storyblokInit({
-    accessToken: process.env.storyblokApiToken,
-    use: [apiPlugin],
-  });
-  // Connection Storyblok Management API
-  const Storyblok = new StoryblokClient({
-    oauthToken: process.env.storyblockOathToken,
-  });
 
   switch (method) {
     case "POST":
@@ -30,15 +30,16 @@ export default async function handler(req, res) {
 
         const defaultLang = "en"; // Default language
 
-        // Todo: Filter language. Get spaceinfo (not working?) whyy??
-        console.log(req.body.space_id);
-        let { data2 } = await Storyblok.get("spaces/", {});
-        console.log(data2);
+        // GETs translatable languages from space
+        let response = await Storyblok.get(`spaces/${req.body.space_id}/`);
+        let languages = response.data.space.languages;
 
         // GETs translateable object from Storyblok,
         let { data } = await Storyblok.get(
           `spaces/${req.body.space_id}/stories/${req.body.story_id}/export.json?lang_code=${defaultLang}&export_lang=true`
         );
+
+        //console.log(data);
         // Example output from "data":
         /* 
           {
@@ -55,28 +56,57 @@ export default async function handler(req, res) {
           */
 
         // Todo:  POST object to Tobbe translate/Laravel
-        /*  
-         const body = {
-            id, // 258991850
-            space_id: req.body.space_id, // 196581
-            data, // se eaxample above
-            toLang: filteredLang, // [ { "code": "de", "name": "German" } ]
-          };
-          
-          const request = {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          };
+        const body = {
+          story_id: req.body.story_id, // 258991850
+          space_id: req.body.space_id, // 196581
+          data, // se example above
+          toLang: languages, // [ { "code": "de", "name": "German" },{ "code": "es", "name": "Spanish" } ]
+        };
+        //console.log(body);
+
+        const request = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        };
+        /* 
           let response = await fetch("/urltotobbetranslateapi", request);
           let result = await response.json();
           console.log(result); 
            */
 
         // Todo:  Receive Translated objects and POST to Storyblok for each country.
-        // generates random string to show the trigger works. Will be removed later
+        // What we need from laravel to be able to POST back translated objects to Storyblock
+        /*  const responseFromTobbe = [
+          {
+            story_id: 258991850,
+            space_id: 196581,
+            data: {
+              "83266319-7946-4ecd-b2ed-a51b8c17c08b:all-articles:title":
+                "En story med en text uppdaterad till spanska",
+              language: "es", // language this object shall import to
+              page: "258991850",
+              text_nodes: 0,
+              url: "blog/",
+            },
+          },
+          {
+            story_id: 258991850,
+            space_id: 196581,
+            data: {
+              "83266319-7946-4ecd-b2ed-a51b8c17c08b:all-articles:title":
+                "En story med en text uppdaterad till tyska",
+              language: "de", // language this object shall import to
+              page: "258991850",
+              text_nodes: 0,
+              url: "blog/",
+            },
+          },
+        ]; */
+
+        // Generates random string to show the trigger works. Will be removed later
         const random = randomstring.generate(7);
 
         // Mockup data. Represents "data" we get back from laravel.
@@ -89,10 +119,7 @@ export default async function handler(req, res) {
           url: "blog/",
         };
 
-        // What we need from laravel to be able to POST back translated objects to Storyblock
-        //console.log({ json, id, spaceId });
-
-        // Updates story with specific language
+        // Updates story with specific language (with mockup data atm). Not adjusted to a response with array.
         await axios({
           url: `https://mapi.storyblok.com/v1/spaces/${req.body.space_id}/stories/${req.body.story_id}/import.json?lang_code=${json.language}`,
           method: "put",
